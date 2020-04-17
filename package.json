@@ -1,0 +1,14 @@
+{
+    "name": "vrudex",
+    "version": "1.0.0",
+    "description": "Building blocks for CRUD operations on vuex store",
+    "author": "Raikel Bordón López",
+    "license": "MIT"
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "vue": "2.6.11",
+        "loglevel": "1.6.8"
+    },
+}
