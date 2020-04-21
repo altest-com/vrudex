@@ -1,5 +1,3 @@
-const log = require('loglevel');
-
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 const isEmpty = function(val) {
@@ -7,7 +5,9 @@ const isEmpty = function(val) {
 };
 
 class Model {
-    props = {};
+    constructor() {
+        this.props = {};
+    }    
 
     create() {
         const data = {};
@@ -33,7 +33,7 @@ class Model {
             const type = prop.type;
             switch (type) {
                 case Number:
-                    val = null;
+                    val = undefined;
                     break;
                 case Date:
                     val = null;
@@ -48,7 +48,7 @@ class Model {
                     val = null;
                     break;
                 default:
-                    log.warn(`Unknown prop type "${type}".`);
+                    console.warn(`Unknown prop type "${type}".`);
                     break;
             }
         }
@@ -85,7 +85,7 @@ class Model {
                                     }                                    
                                 });
                             } else {
-                                log.warn(
+                                console.warn(
                                     `Data for API key ${prop.api} is not an array for model ${model}.`);
                             }                            
                         } else {
@@ -100,7 +100,7 @@ class Model {
                     if (prop.fill) {
                         data[key] = this.propValue(key);
                     } else if (!prop.optional) {
-                        log.warn(
+                        console.warn(
                             `Missed API key ${prop.api} for model ${model}.`
                         );
                     }  
@@ -143,13 +143,13 @@ class Model {
             if (prop.many) {
                 for (let i = 0; i < value.length; i++) {
                     if (prop.choices.indexOf(value[i]) === -1) {
-                        log.warn(`Value "${value[i]}" for key "${key}" not in choices for model ${model}.`);
+                        console.warn(`Value "${value[i]}" for key "${key}" not in choices for model ${model}.`);
                         return false;
                     }                
                 }
             } else {
                 if (prop.choices.indexOf(value) === -1) {
-                    log.warn(`Value "${value}" for key "${key}" not in choices for model ${model}.`);
+                    console.warn(`Value "${value}" for key "${key}" not in choices for model ${model}.`);
                     return false;
                 }
             }
@@ -158,68 +158,5 @@ class Model {
     }
 }
 
-const timeReader = function(time) {
-    if (!time) {
-        return time;
-    }
-    const d = new Date('1970-01-01T' + time);
-    return isNaN(d) ? time : d;
-};
+export default Model;
 
-const timeWriter = function(date) {
-    if (!date) {
-        return date;
-    }
-    const d = new Date(date);
-    return isNaN(d) ? date : d.toISOString().substring(11, 19);
-};
-
-const dateReader = function(date) {
-    if (!date) {
-        return date;
-    }
-    const d = new Date(date + 'T00:00:00');
-    return isNaN(d) ? date : d;
-};
-
-const dateWriter = function(date) {
-    if (!date) {
-        return date;
-    }
-    const d = new Date(date);
-    return isNaN(d) ? date : d.toISOString().substring(0, 10);
-};
-
-const yearReader = function(year) {
-    if (!year) {
-        return year;
-    }
-    const date_ = new Date(`${year}-01-01T00:00:00`);
-    return isNaN(date_) ? year : date_;
-};
-
-const yearWriter = function(date) {
-    if (!date) {
-        return date;
-    }
-    const date_ = new Date(date);
-    return isNaN(date_) ? date_ : date_.getFullYear();
-};
-
-const numberReader = function(val) {
-    if (val === null) {
-        return undefined;
-    }
-    return val;
-};
-
-export { 
-    Model, 
-    dateReader,
-    dateWriter,
-    timeReader,
-    timeWriter,
-    yearReader,
-    yearWriter,
-    numberReader 
-};

@@ -1,0 +1,14 @@
+{
+    "editor.detectIndentation": false,
+    "files.watcherExclude": {
+        "lib/**": true
+    },
+    "search.exclude": {
+        "lib/**": true
+    },
+    "cSpell.words": [
+        "vrudex"
+    ],
+    "prettier.tabWidth": 4,
+    "eslint.alwaysShowStatus": true
+}

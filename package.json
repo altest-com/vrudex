@@ -2,13 +2,42 @@
     "name": "vrudex",
     "version": "1.0.0",
     "description": "Building blocks for CRUD operations on vuex store",
-    "author": "Raikel Bordón López",
-    "license": "MIT"
+    "main": "./src/index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "eslint src"
+    },
+    "files": [
+        "src"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/altest-com/vrudex.git"
+    },
+    "keywords": [
+        "boilerplate",
+        "npm",
+        "module",
+        "node",
+        "javascript"
+    ],
+    "author": "Raikel Bordón López",
+    "license": "MIT",
+    "homepage": "https://github.com/altest-com/vrudex#readme",
+    "bugs": {
+        "url": "https://github.com/altest-com/vrudex/issues"
     },
     "dependencies": {
-        "vue": "2.6.11",
-        "loglevel": "1.6.8"
+        "vue": "^2.6.11",
+        "axios": "^0.19.2",
+        "qs": "^6.9.1"
     },
+    "devDependencies": {
+        "babel-eslint": "10.0.3",
+        "eslint": "6.8.0",
+        "eslint-plugin-vue": "6.1.2"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions"
+    ]
 }
