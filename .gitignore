@@ -31,14 +31,13 @@ jspm_packages
 .node_repl_history
 
 # Editors
-.idea
+.vscode
 
 # Lib
 lib
 
 # npm package lock
 package-lock.json
-yarn.lock
 
-others
+# others
 gitpush.sh
