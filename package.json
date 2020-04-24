@@ -1,6 +1,6 @@
 {
     "name": "vrudex",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Building blocks for CRUD operations on vuex store",
     "main": "./src/index.js",
     "scripts": {
