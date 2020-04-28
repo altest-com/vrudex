@@ -116,12 +116,12 @@ class Model {
     apiPost(data = {}, empty = true) {
         const apiData = {};
 
-        for (const key in data) {
+        Object.keys(data).forEach(key => {
             const prop = this.props[key];
             if (hasOwnProperty.call(this.props, key) && prop.writable) {
                 const value = data[key];
                 var valid = this.checkChoice(value, prop, prop.api);
-                if (valid && (empty || (!empty && !isEmpty(value)))) {
+                if (valid && (empty || !isEmpty(value))) {
                     const apiProp = prop.api;
                     if (prop.writer) {
                         apiData[apiProp] = prop.writer(value);
@@ -132,7 +132,7 @@ class Model {
                     }                    
                 }
             }            
-        }
+        });
         return apiData;
     }
 
