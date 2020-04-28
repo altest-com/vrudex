@@ -21,3 +21,10 @@ export const yearWriter = function(date) {
     const date_ = new Date(date);
     return isNaN(date_) ? date_ : date_.getFullYear();
 };
+
+export const numberWriter = function(val) {
+    if (val === undefined) {
+        return null;
+    }
+    return val;
+};
