@@ -23,5 +23,6 @@ export const actTypes = {
     SET_FILTER: 'setFilter',
     RESET_FILTER: 'resetFilter',
     SET_ORDER: 'setOrder',
-    SET_PAGE: 'setPageSize'
+    SET_PAGE: 'setPageSize',
+    SET_GETTING: 'setGetting'
 };

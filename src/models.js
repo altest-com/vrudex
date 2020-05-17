@@ -1,7 +1,7 @@
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 const isEmpty = function(val) {
-    return val === undefined || val === null || val === '';
+    return [undefined, null, '', NaN].includes(val);
 };
 
 class Model {

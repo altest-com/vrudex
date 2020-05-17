@@ -25,7 +25,7 @@ class Api {
         this.axios.defaults.headers.common['Authorization'] = token;
     }
     
-    fetch(params) {
+    fetch(params = {}) {
         return this.axios.get(this.path, {
             params: params,
             paramsSerializer: (p) => {
@@ -34,8 +34,8 @@ class Api {
         });
     }
     
-    retrieve(id = '') {
-        return this.axios.get(this.path + id + '/');
+    retrieve(id = '', params = {}) {
+        return this.axios.get(this.path + id + '/', { params: params });
     }
     
     create(params) {

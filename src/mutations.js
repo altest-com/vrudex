@@ -57,8 +57,10 @@ const SET_PAGE_SIZE = (state, size) => {
     state.pageSize = size;
 };
 
-const SET_GETTING = (state, {id, value}) => {
-    state.getting[id] = value;
+const SET_GETTING = (state, items) => {
+    items.forEach(({id, value}) => {
+        state.getting[id] = value;
+    });    
 };
 
 export {

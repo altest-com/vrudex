@@ -1,6 +1,6 @@
 import { mutTypes } from './types';
 
-function getItem(context, id) {
+/* function getItem(context, id) {
     const items = context.state.items;
     const getting = context.state.getting || {};
     if (items[id] !== undefined) {
@@ -13,19 +13,53 @@ function getItem(context, id) {
             context.commit(mutTypes.SET_GETTING, {id: id, value: false});
         });
     }
+} */
+
+function isEmpty(value) {
+    return [undefined, null, '', NaN].includes(value);
 }
 
-function fetchItems(context, params) {
+function delEmpty(data) {
+    const _data = {};
+    Object.keys(data).forEach(key => {
+        if (!isEmpty(data[key])) {
+            _data[key] = data[key];
+        }
+    });
+    return _data;
+}
+
+function getItem(context, id) {
+    const items = context.state.items;
+    const getting = context.state.getting || {};
+    if (items[id] !== undefined) {
+        return items[id];
+    } else if (!getting[id]) {
+        context.commit(mutTypes.SET_GETTING, [{
+            id: id, 
+            value: true
+        }]);
+        context.dispatch('retrieveItem', { id: id }).then(() => {
+            context.commit(mutTypes.SET_GETTING, [{
+                id: id, 
+                value: false
+            }]);
+        });
+    }
+    return null;
+}
+
+function fetchItems(context, params = {}) {
     const state = context.state;
     const model = state.MODEL;
     const filter = state.FILTER;
     const api = state.API;
     const filterData = filter ? filter.apiPost(state.filter, false) : {};
 
-    params = Object.assign({}, params, filterData, {
+    params = Object.assign({}, filterData, {
         limit: state.pageSize,
         offset: state.pageNumber * state.pageSize
-    });
+    }, delEmpty(params));
 
     context.commit(mutTypes.SET_LOADING, true);
 
@@ -52,21 +86,29 @@ function fetchItems(context, params) {
     });
 }
 
-function retrieveItem(context, id) {
+function retrieveItem(context, {id, params = {}}) {
     const model = context.state.MODEL;
     const api = context.state.API;
 
     context.commit(mutTypes.SET_LOADING, true);
-    
+    context.commit(mutTypes.SET_GETTING, [{
+        id: id, 
+        value: true
+    }]);
+
     return new Promise((resolve, reject) => {
-        api.retrieve(id).then(({ data }) => {
+        api.retrieve(id, delEmpty(params)).then(({ data }) => {
             const item = model.apiGet(data);
             context.commit(mutTypes.SET_ITEM, item);
-            context.commit(mutTypes.SET_LOADING, false);
             resolve(item);
-        }).catch(error => {
-            context.commit(mutTypes.SET_LOADING, false);
+        }).catch(error => {            
             reject(error);
+        }).finally(() => {
+            context.commit(mutTypes.SET_LOADING, false);
+            context.commit(mutTypes.SET_GETTING, [{
+                id: id, 
+                value: false
+            }]);
         });
     });
 }
@@ -92,7 +134,7 @@ function createItem(context, { item, persist = true }) {
             }).catch(error => {
                 context.commit(mutTypes.SET_LOADING, false);
                 reject(error);
-            });       
+            });
         });
     }
 }
@@ -160,6 +202,10 @@ function setPageSize({ commit }, size) {
     commit(mutTypes.SET_PAGE_SIZE, size);
 }
 
+function setGetting({ commit }, items) {
+    commit(mutTypes.SET_GETTING, items);
+}
+
 export {
     getItem,
     fetchItems,
@@ -171,5 +217,6 @@ export {
     resetFilter,
     setOrder,
     setPage,
-    setPageSize
+    setPageSize,
+    setGetting
 };
