@@ -5,7 +5,8 @@ import * as writers from './writers';
 import * as actions from './actions'; 
 import * as getters from './getters';
 import * as mutations from './mutations'; 
-import * as types from './types'; 
+import * as types from './types';
+import * as files from './files';
 
 export {
     Api,
@@ -15,5 +16,6 @@ export {
     actions,
     getters,
     mutations,
-    types
+    types,
+    files
 };

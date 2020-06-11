@@ -59,6 +59,10 @@ class Model {
         const data = {};
         const model = this.constructor.name;
 
+        if (isEmpty(apiData)) {
+            apiData = {};
+        }
+
         Object.keys(this.props).forEach(key => {
             const prop = this.props[key];
             if (prop.api) { 
@@ -71,7 +75,11 @@ class Model {
                                 data[key].push(prop.model.apiGet(apiProp));
                             });
                         } else {
-                            data[key] = prop.model.apiGet(value);
+                            if (isEmpty(value) && prop.nullable) {
+                                data[key] = null;
+                            } else {
+                                data[key] = prop.model.apiGet(value);
+                            }
                         }
                     } else {
                         if (prop.many === true) {
@@ -86,7 +94,7 @@ class Model {
                                 });
                             } else {
                                 console.warn(
-                                    `Data for API key ${prop.api} is not an array for model ${model}.`);
+                                    `Data for API key ${prop.api} is not an array for ${model}.`);
                             }                            
                         } else {
                             if (prop.reader) {
@@ -101,7 +109,7 @@ class Model {
                         data[key] = this.propValue(key);
                     } else if (!prop.optional) {
                         console.warn(
-                            `Missed API key ${prop.api} for model ${model}.`
+                            `Missed API key ${prop.api} for ${model}.`
                         );
                     }  
                 }

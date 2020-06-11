@@ -1,20 +1,5 @@
 import { mutTypes } from './types';
 
-/* function getItem(context, id) {
-    const items = context.state.items;
-    const getting = context.state.getting || {};
-    if (items[id] !== undefined) {
-        return new Promise((resolve) => {
-            resolve(items[id]);
-        });
-    } else if (!getting[id]) {
-        context.commit(mutTypes.SET_GETTING, {id: id, value: true});
-        return context.dispatch('retrieveItem', id).then(() => {
-            context.commit(mutTypes.SET_GETTING, {id: id, value: false});
-        });
-    }
-} */
-
 function isEmpty(value) {
     return [undefined, null, '', NaN].includes(value);
 }
