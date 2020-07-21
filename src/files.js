@@ -1,7 +1,8 @@
-import {mutTypes} from './types';
+import { mutTypes } from './types';
 import FileSaver from 'file-saver';
+import { delEmpty } from './utils';
 
-function fetchFile(context, params) {
+function fetchFile(context, {params = {}, path = '', name = ''}) {
     const state = context.state;
     const filter = state.FILTER;
     const api = state.API;
@@ -17,12 +18,11 @@ function fetchFile(context, params) {
     context.commit(mutTypes.SET_LOADING, true);
 
     return new Promise((resolve, reject) => {
-        api.download(params).then((response) => {
+        api.download(path, params).then((response) => {
             const fileNameHeader = 'filename';
-            let fileName = response.headers[fileNameHeader];
+            let fileName = response.headers[fileNameHeader] || name;
             if (!fileName) {
-                const date = new Date().toISOString().slice(0, 16);
-                fileName = `activos-${date}.xls`;
+                fileName = String(new Date().getTime()).slice(-8);
             }
             // Let the user save the file.
             FileSaver.saveAs(response.data, fileName);
@@ -34,3 +34,7 @@ function fetchFile(context, params) {
         });
     });
 }
+
+export {
+    fetchFile
+};
