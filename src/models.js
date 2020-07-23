@@ -7,22 +7,22 @@ const isEmpty = function(val) {
 class Model {
     constructor() {
         this.props = {};
-    }    
+    }
 
     create() {
         const data = {};
-        Object.keys(this.props).forEach(key => {            
+        Object.keys(this.props).forEach(key => {
             data[key] = this.propValue(key);
         });
         return data;
     }
 
     propValue(key) {
-        const prop = this.props[key]; 
+        const prop = this.props[key];
         let val = null;
         if (hasOwnProperty.call(prop, 'default')) {
-            val = typeof prop.default === 'function' ? 
-                prop.default() : prop.default;            
+            val = typeof prop.default === 'function' ?
+                prop.default() : prop.default;
         } else if (prop.many === true) {
             val = [];
         } else if (prop.choices !== undefined && prop.choices.length) {
@@ -65,7 +65,7 @@ class Model {
 
         Object.keys(this.props).forEach(key => {
             const prop = this.props[key];
-            if (prop.api) { 
+            if (prop.api) {
                 if (hasOwnProperty.call(apiData, prop.api)) {
                     const value = apiData[prop.api];
                     if (prop.model) {
@@ -90,18 +90,18 @@ class Model {
                                         data[key].push(prop.reader(apiProp));
                                     } else {
                                         data[key].push(apiProp);
-                                    }                                    
+                                    }
                                 });
                             } else {
                                 console.warn(
                                     `Data for API key ${prop.api} is not an array for ${model}.`);
-                            }                            
+                            }
                         } else {
                             if (prop.reader) {
                                 data[key] = prop.reader(value);
                             } else {
                                 data[key] = value;
-                            }                            
+                            }
                         }
                     }
                 } else {
@@ -111,11 +111,11 @@ class Model {
                         console.warn(
                             `Missed API key ${prop.api} for ${model}.`
                         );
-                    }  
+                    }
                 }
             } else {
                 data[key] = this.propValue(key);
-            }            
+            }
             this.checkChoice(data[key], prop, prop.api);
         });
         return data;
@@ -123,23 +123,46 @@ class Model {
 
     apiPost(data = {}, empty = true) {
         const apiData = {};
+        const model = this.constructor.name;
 
         Object.keys(data).forEach(key => {
             const prop = this.props[key];
-            if (hasOwnProperty.call(this.props, key) && prop.writable) {
+            if (hasOwnProperty.call(this.props, key) && prop.writable && prop.api) {
                 const value = data[key];
-                var valid = this.checkChoice(value, prop, prop.api);
-                if (valid && (empty || !isEmpty(value))) {
-                    const apiProp = prop.api;
-                    if (prop.writer) {
-                        apiData[apiProp] = prop.writer(value);
-                    } else if (prop.model) {
-                        apiData[apiProp] = prop.model.apiPost(value);
+                const apiProp = prop.api;
+
+                if (prop.many) {
+                    const valuesList = [];
+                    if (Array.isArray(value)) {
+                        value.forEach(item => {
+                            const valid = this.checkChoice(item, prop, prop.api);
+                            if (valid && (empty || !isEmpty(item))) {
+                                if (prop.writer) {
+                                    valuesList.push(prop.writer(item));
+                                } else if (prop.model) {
+                                    valuesList.push(prop.model.apiPost(item));
+                                } else {
+                                    valuesList.push(item);
+                                }
+                            }
+                        });
                     } else {
-                        apiData[apiProp] = value;
-                    }                    
+                        console.warn(`Data for API key ${prop.api} is not an array for ${model}.`);
+                    }
+                    apiData[apiProp] = valuesList;
+                } else {
+                    const valid = this.checkChoice(value, prop, prop.api);
+                    if (valid && (empty || !isEmpty(value))) {
+                        if (prop.writer) {
+                            apiData[apiProp] = prop.writer(value);
+                        } else if (prop.model) {
+                            apiData[apiProp] = prop.model.apiPost(value);
+                        } else {
+                            apiData[apiProp] = value;
+                        }
+                    }
                 }
-            }            
+            }
         });
         return apiData;
     }
@@ -153,7 +176,7 @@ class Model {
                     if (prop.choices.indexOf(value[i]) === -1) {
                         console.warn(`Value "${value[i]}" for key "${key}" not in choices for model ${model}.`);
                         return false;
-                    }                
+                    }
                 }
             } else {
                 if (prop.choices.indexOf(value) === -1) {
@@ -161,7 +184,7 @@ class Model {
                     return false;
                 }
             }
-        }        
+        }
         return true;
     }
 }

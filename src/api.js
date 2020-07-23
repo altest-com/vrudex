@@ -1,6 +1,10 @@
 import Qs from 'qs';
 import Jwt from './jwt';
 
+const paramSerializer = (params) => {
+    return Qs.stringify(params, { arrayFormat: 'repeat' });
+};
+
 class Api {
     constructor(axios, path = '') {
         if (path.length && path[path.length - 1] !== '/') {
@@ -28,22 +32,29 @@ class Api {
     fetch(params = {}, path = '') {
         return this.axios.get(this.path + path, {
             params: params,
-            paramsSerializer: (p) => {
-                return Qs.stringify(p, { arrayFormat: 'repeat' });
-            }
+            paramsSerializer: paramSerializer
         });
     }
 
     retrieve(id = '', params = {}, path = '') {
-        return this.axios.get(this.path + id + '/' + path, { params: params });
+        return this.axios.get(this.path + id + '/' + path, {
+            params: params,
+            paramsSerializer: paramSerializer
+        });
     }
 
     create(data, params = {}) {
-        return this.axios.post(this.path, data, {params: params});
+        return this.axios.post(this.path, data, {
+            params: params,
+            paramsSerializer: paramSerializer
+        });
     }
 
     update(id, data, params = {}) {
-        return this.axios.patch(this.path + id + '/', data, {params: params});
+        return this.axios.patch(this.path + id + '/', data, {
+            params: params,
+            paramsSerializer: paramSerializer
+        });
     }
 
     destroy(id) {
@@ -53,7 +64,8 @@ class Api {
     download(path = '', params = {}) {
         return this.axios.get(this.path + path, {
             responseType: 'blob',
-            params: params
+            params: params,
+            paramsSerializer: paramSerializer
         });
     }
 }
